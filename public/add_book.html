@@ -46,7 +46,7 @@
                 </select>
             </div>
 
-        
+
             <div class="form-element">
                 <button type="submit">Add Book</button>
             </div>
@@ -54,7 +54,58 @@
         </form>
     </div>
 
-   
+
 
 </body>
+
 </html>
+
+<script>
+
+    // 先抓取stores的資料呈現在頁面上
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:3000/api/stores',
+        success: (data, status, xhr) => {
+            data.map((item) => {
+                $('#stores').append($('<option>', {
+                    value: item.name,
+                    text: item.name
+                }))
+            })
+
+        },
+        error: () => {
+            alert('Something went wrong')
+        }
+    })
+
+    $('#books_form').submit((e) => {
+        e.preventDefault()
+
+        let bookObj = {
+            name: $('#name').val(),
+            author: $('#author').val(),
+            pages: $('#pages').val(),
+            price: $('#price').val(),
+            stores: $('#stores').val()
+        }
+
+        // 將資料儲存起來
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:3000/api/add/books',
+            data: JSON.stringify(bookObj),
+            contentType: 'application/json',
+            success: (data, status, xhr) => {
+                console.log($('#book_form'))
+                $('#book_form')[0].reset()
+                alert('thank you!')
+            },
+            error: (xhr) => {
+                alert('Something went wrong')
+            }
+        })
+    })
+
+</script>

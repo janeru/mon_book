@@ -42,4 +42,28 @@
 
 
 </body>
+
 </html>
+
+<script>
+    $('#stores').submit((e) => {
+        e.preventDefault()
+        let name = $('#name').val()
+        let address = $('#address').val()
+        let phone = $('#phone').val()
+
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:3000/api/add/store',
+            data: JSON.stringify({ name, address, phone }),
+            contentType: 'application/json',
+            success: (data, status, xhr) => {
+                $('#store')[0].reset(0)
+                alert('Thank you')
+            },
+            error: (xhr) => {
+                alert('Something went wrong')
+            }
+        })
+    })
+</script>
