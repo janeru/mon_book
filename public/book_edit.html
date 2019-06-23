@@ -48,7 +48,8 @@
 
 
             <div class="form-element">
-                <button type="submit">Add Book</button>
+                <button type="submit">Edit Book</button>
+                <div id="delete_book">DELETE</div>
             </div>
 
         </form>
@@ -57,5 +58,82 @@
 
 
 </body>
+<script>
+    // 先抓取stores的資料呈現在頁面上
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:3000/api/stores',
+        success: (data, status, xhr) => {
+            data.map((item) => {
+                $('#stores').append($('<option>', {
+                    value: item.name,
+                    text: item.name
+                }))
+            })
+
+        },
+        error: () => {
+            alert('Something went wrong')
+        }
+    })
+
+    let searchParams = new URLSearchParams(window.location.search) // ?book_id=1234345
+    let bookID = searchParams.get('book_id')
+    alert(bookID)
+    // 抓取要編輯的項目data
+    $.ajax({
+        type: 'GET',
+        url: `http://localhost:3000/api/books/${bookID}`,
+        success: (data, status, xhr) => {
+            $('#name').val(data.name),
+                $('#author').val(data.author),
+                $('#pages').val(data.pages)
+            $('#price').val(data.price)
+            $('#stores').val(data.stores)
+        },
+        error: (xhr) => {
+            alert('Something is wrong')
+        }
+    })
+
+    $('#books_form').submit((e) => {
+        e.preventDefault()
+        let bookObj = {
+            name: $('#name').val(),
+            author: $('#author').val(),
+            pages: $('#pages').val(),
+            price: $('#price').val(),
+            stores: $('#stores').val()
+        }
+
+        // 將資料更新
+        $.ajax({
+            type: 'PATCH',
+            url: `http://localhost:3000/api/add/books/${bookID}`,
+            data: JSON.stringify(bookObj),
+            contentType: 'application/json',
+            success: (data, status, xhr) => {
+                console.log($(data))
+                alert('the book was updated')
+            },
+            error: (xhr) => {
+                alert('Something went wrong')
+            }
+        })
+    })
+
+    $('#delete_book').click(() => {
+        $.ajax({
+            type: 'DELETE',
+            url: `http://localhost:3000/api/delete/books/${bookID}`,
+            success: (data, status, xhr) => {
+                alert('deleted')
+            },
+            error: () => {
+                alert('Something is wrong.')
+            }
+        })
+    })
+</script>
 
 </html>

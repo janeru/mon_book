@@ -29,11 +29,12 @@
 <script>
     $.ajax({
         type: 'GET',
-        url: 'http://localhost:3000/api/books',
+        url: 'http://localhost:3000/api/books?limit=3&ord=desc',
         success: (data, status, xhr) => {
             let template = ``
+            console.log(data)
             data.map((item) => {
-                template += ` <a href="book_edit.html?book_id=${item.id}" class="book_item">
+                template += `<a href="book_edit.html?book_id=${item._id}" class="book_item">
                 <div class="item name">
                     <span>Book Name:</span>${item.name}
                 </div>

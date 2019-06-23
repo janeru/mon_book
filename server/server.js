@@ -60,12 +60,42 @@ app.get('/api/stores', (req, res) => {
 })
 
 app.get('/api/books', (req, res) => {
-    Book.find((err, doc) => {
+    // 抓取url query的limit
+    let limit = req.query.limit ? parseInt(req.query.limit) : 10
+    // 抓取url query的ord
+    let ord = req.query.ord ? req.query.ord : 'asc'
+    // 因為mongo 的id 是timestamp
+    Book.find().limit(limit).sort({ _id: ord }).exec((err, doc) => {
+        if (err) res.status(400).send(err)
+        res.send(doc)
+    })
+    // Book.find((err, doc) => {
+    //     if (err) res.status(400).send(err)
+    //     res.send(doc)
+    // })
+})
+
+app.get('/api/books/:id', (req, res) => {
+    Book.findById(req.params.id, (err, doc) => {
         if (err) res.status(400).send(err)
         res.send(doc)
     })
 })
 
+// 更新修改後的書籍
+app.patch('/api/add/books/:id', (req, res) => {
+    Book.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true }, (err, doc) => {
+        if (err) res.status(400).send(err)
+        res.send(doc)
+    })
+})
+// DELETE
+app.delete('/api/delete/books/:id', (req, res) => {
+    Book.findByIdAndRemove(req.params.id, (err, doc) => {
+        if (err) res.status(400).send(err)
+        res.status(200).send()
+    })
+})
 const port = process.env.PORT || 3000
 app.listen(port, () => {
     console.log(`Started a port ${port}`)
